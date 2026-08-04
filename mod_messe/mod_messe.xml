@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="module" client="site" method="upgrade">
+
+    <name>Orari Messe</name>
+    <author>Gioacchino Cipriano</author>
+    <version>1.1.11</version>
+    <description>Modulo widget per la visualizzazione degli orari delle Sante Messe — Gestione Orari Messe by Gioacchino Cipriano</description>
+    <copyright>Copyright (C) 2026 Gioacchino Cipriano. All rights reserved.</copyright>
+    <license>GNU General Public License version 2 or later</license>
+    <creationDate>Gennaio 2026</creationDate>
+    <namespace path="src">GioachinoCipriano\Module\Messe</namespace>
+
+    <files>
+        <filename module="mod_messe">mod_messe.php</filename>
+        <folder>src</folder>
+        <folder>tmpl</folder>
+    </files>
+
+    <languages>
+        <language tag="it-IT">language/it-IT/mod_messe.ini</language>
+        <language tag="en-GB">language/en-GB/mod_messe.ini</language>
+    </languages>
+
+    <config>
+        <fields name="params">
+            <fieldset name="basic" label="Impostazioni Modulo">
+
+                <field
+                    name="chiesa_id"
+                    type="sql"
+                    label="MOD_MESSE_PARAM_CHIESA_ID"
+                    description="MOD_MESSE_PARAM_CHIESA_ID_DESC"
+                    query="SELECT id AS value, CONCAT(nome, ' (', rito, ')') AS text FROM #__messe_chiese WHERE published = 1 ORDER BY ordering ASC, nome ASC"
+                    key_field="value"
+                    value_field="text"
+                    required="true" />
+
+                <field name="show_next_mass" type="radio"
+                    label="MOD_MESSE_PARAM_SHOW_NEXT_MASS"
+                    default="1" layout="joomla.form.field.radio.switcher">
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+
+                <field name="show_orari" type="radio"
+                    label="MOD_MESSE_PARAM_SHOW_ORARI"
+                    default="1" layout="joomla.form.field.radio.switcher">
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+
+                <field name="days_window"     type="number" label="MOD_MESSE_PARAM_DAYS_WINDOW"     default="7"  min="3" max="30" />
+                <field name="days_prefestivo" type="number" label="MOD_MESSE_PARAM_DAYS_PREFESTIVO"  default="5" min="1" max="30" />
+                <field name="days_speciali"   type="number" label="MOD_MESSE_PARAM_DAYS_SPECIALI"    default="15" min="7" max="60" />
+                <field name="usa_soglia_oraria_prefestiva" type="radio" label="MOD_MESSE_PARAM_USA_SOGLIA_PREFESTIVA" description="MOD_MESSE_PARAM_USA_SOGLIA_PREFESTIVA_DESC" default="1" layout="joomla.form.field.radio.switcher">
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+                <field name="ora_prefestivo"  type="number" label="MOD_MESSE_PARAM_ORA_PREFESTIVO" description="MOD_MESSE_PARAM_ORA_PREFESTIVO_DESC" default="16" min="0" max="23" showon="usa_soglia_oraria_prefestiva:1" />
+                <field name="ora_prefestivo_max"  type="number" label="MOD_MESSE_PARAM_ORA_PREFESTIVO_MAX" description="MOD_MESSE_PARAM_ORA_PREFESTIVO_MAX_DESC" default="20" min="0" max="23" showon="usa_soglia_oraria_prefestiva:1" />
+                <field name="mostra_giorno_prefestivo" type="radio" label="MOD_MESSE_PARAM_MOSTRA_GIORNO_PREFESTIVO" description="MOD_MESSE_PARAM_MOSTRA_GIORNO_PREFESTIVO_DESC" default="0" layout="joomla.form.field.radio.switcher">
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+                <field name="periodi_influenzano_prefestiva" type="radio" label="MOD_MESSE_PARAM_PERIODI_PREFESTIVA" description="MOD_MESSE_PARAM_PERIODI_PREFESTIVA_DESC" default="1" layout="joomla.form.field.radio.switcher">
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+
+                <field name="test_mode" type="radio"
+                    label="MOD_MESSE_PARAM_TESTMODE"
+                    description="MOD_MESSE_PARAM_TESTMODE_DESC"
+                    default="0" layout="joomla.form.field.radio.switcher">
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+
+                <field name="test_date" type="text"
+                    label="MOD_MESSE_PARAM_TEST_DATE"
+                    description="MOD_MESSE_PARAM_TEST_DATE_DESC"
+                    default="2026-12-24 20:00" />
+
+            </fieldset>
+        </fields>
+    </config>
+
+</extension>

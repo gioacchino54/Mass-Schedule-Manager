@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="component" method="upgrade">
+
+    <name>COM_MESSE</name>
+    <author>Gioacchino Cipriano</author>
+    <version>1.3.22</version>
+    <description>COM_MESSE_DESCRIPTION</description>
+    <copyright>Copyright (C) 2026 Gioacchino Cipriano. All rights reserved.</copyright>
+    <license>GNU General Public License version 2 or later</license>
+    <creationDate>Gennaio 2026</creationDate>
+    <namespace path="src">GioachinoCipriano\Component\Messe</namespace>
+    <scriptfile>script.php</scriptfile>
+
+    <install>
+        <sql>
+            <file driver="mysql" charset="utf8mb4">sql/install.mysql.utf8.sql</file>
+        </sql>
+    </install>
+
+    <update>
+        <schemas>
+            <schemapath type="mysql">sql/updates/mysql</schemapath>
+        </schemas>
+    </update>
+
+    <uninstall>
+        <!-- Le tabelle NON vengono più eliminate qui automaticamente:
+             la decisione è demandata a Com_MesseInstallerScript::uninstall(),
+             che rispetta l'opzione "Mantieni dati alla disinstallazione"
+             delle opzioni del componente. -->
+    </uninstall>
+
+    <!-- BACKEND -->
+    <administration>
+        <menu link="option=com_messe">COM_MESSE</menu>
+        <submenu>
+            <menu link="option=com_messe&amp;view=chiese">COM_MESSE_MENU_CHIESE</menu>
+            <menu link="option=com_messe&amp;view=chiesa&amp;layout=edit">COM_MESSE_MENU_AGGIUNGI</menu>
+        </submenu>
+        <files folder="admin">
+            <filename>config.xml</filename>
+            <filename>access.xml</filename>
+            <folder>services</folder>
+            <folder>sql</folder>
+            <folder>src</folder>
+            <folder>tmpl</folder>
+        </files>
+        <languages folder="admin/language">
+            <language tag="it-IT">it-IT/com_messe.ini</language>
+            <language tag="it-IT">it-IT/com_messe.sys.ini</language>
+            <language tag="en-GB">en-GB/com_messe.ini</language>
+            <language tag="en-GB">en-GB/com_messe.sys.ini</language>
+        </languages>
+    </administration>
+
+    <!-- FRONTEND -->
+    <files folder="site">
+        <folder>services</folder>
+        <folder>src</folder>
+        <folder>tmpl</folder>
+    </files>
+
+    <languages folder="site/language">
+        <language tag="it-IT">it-IT/com_messe.ini</language>
+        <language tag="en-GB">en-GB/com_messe.ini</language>
+    </languages>
+
+    <config>
+        <fields name="params">
+            <fieldset name="basic" label="Impostazioni">
+                <field name="show_next_mass" type="radio"
+                    label="COM_MESSE_PARAMS_SHOW_NEXT_MASS"
+                    default="1" layout="joomla.form.field.radio.switcher">
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+                <field name="days_window"     type="number" label="COM_MESSE_PARAMS_DAYS_WINDOW"     default="7"  min="3" max="30" />
+                <field name="days_prefestivo" type="number" label="COM_MESSE_PARAMS_DAYS_PREFESTIVO"  default="14" min="7" max="30" />
+                <field name="days_speciali"   type="number" label="COM_MESSE_PARAMS_DAYS_SPECIALI"    default="15" min="7" max="60" />
+                <field name="test_mode" type="radio"
+                    label="COM_MESSE_TESTMODE"
+                    description="COM_MESSE_TESTMODE_DESC"
+                    default="0" layout="joomla.form.field.radio.switcher">
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+                <field name="test_date" type="text"
+                    label="COM_MESSE_TESTMODE_DATA"
+                    description="COM_MESSE_TESTMODE_DATA_DESC"
+                    default="2026-12-24 20:00" />
+            </fieldset>
+        </fields>
+    </config>
+
+</extension>

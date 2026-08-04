@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+
+    <layout title="COM_MESSE_MENU_ORARI_CHIESA">
+        <message>
+            <![CDATA[COM_MESSE_MENU_ORARI_CHIESA_DESC]]>
+        </message>
+    </layout>
+
+    <fields name="params">
+
+        <fieldset name="basic" label="COM_MESSE_PARAMS_BASE">
+
+            <field
+                name="chiesa_id"
+                type="sql"
+                label="COM_MESSE_CAMPO_CHIESA"
+                description="COM_MESSE_CAMPO_CHIESA_DESC"
+                query="SELECT id AS value, CONCAT(nome, ' (', rito, ')') AS text FROM #__messe_chiese WHERE published = 1 ORDER BY ordering ASC, nome ASC"
+                key_field="value"
+                value_field="text"
+                default=""
+                required="false">
+                <option value="">COM_MESSE_TUTTE_CHIESE</option>
+            </field>
+
+            <field
+                name="show_next_mass"
+                type="radio"
+                label="COM_MESSE_PARAMS_SHOW_NEXT_MASS"
+                default="1"
+                layout="joomla.form.field.radio.switcher">
+                <option value="0">JNO</option>
+                <option value="1">JYES</option>
+            </field>
+
+            <field
+                name="days_window"
+                type="number"
+                label="COM_MESSE_PARAMS_DAYS_WINDOW"
+                default="7"
+                min="3"
+                max="30" />
+
+            <field
+                name="days_prefestivo"
+                type="number"
+                label="COM_MESSE_PARAMS_DAYS_PREFESTIVO"
+                default="5"
+                min="1"
+                max="30" />
+
+            <field
+                name="days_speciali"
+                type="number"
+                label="COM_MESSE_PARAMS_DAYS_SPECIALI"
+                default="15"
+                min="7"
+                max="60" />
+
+            <field
+                name="usa_soglia_oraria_prefestiva"
+                type="radio"
+                label="COM_MESSE_PARAMS_USA_SOGLIA_PREFESTIVA"
+                description="COM_MESSE_PARAMS_USA_SOGLIA_PREFESTIVA_DESC"
+                default="1"
+                layout="joomla.form.field.radio.switcher">
+                <option value="0">JNO</option>
+                <option value="1">JYES</option>
+            </field>
+
+            <field
+                name="ora_prefestivo"
+                type="number"
+                label="COM_MESSE_PARAMS_ORA_PREFESTIVO"
+                description="COM_MESSE_PARAMS_ORA_PREFESTIVO_DESC"
+                default="16"
+                min="0"
+                max="23"
+                showon="usa_soglia_oraria_prefestiva:1" />
+
+            <field
+                name="ora_prefestivo_max"
+                type="number"
+                label="COM_MESSE_PARAMS_ORA_PREFESTIVO_MAX"
+                description="COM_MESSE_PARAMS_ORA_PREFESTIVO_MAX_DESC"
+                default="20"
+                min="0"
+                max="23"
+                showon="usa_soglia_oraria_prefestiva:1" />
+
+            <field
+                name="mostra_giorno_prefestivo"
+                type="radio"
+                label="COM_MESSE_PARAMS_MOSTRA_GIORNO_PREFESTIVO"
+                description="COM_MESSE_PARAMS_MOSTRA_GIORNO_PREFESTIVO_DESC"
+                default="0"
+                layout="joomla.form.field.radio.switcher">
+                <option value="0">JNO</option>
+                <option value="1">JYES</option>
+            </field>
+
+            <field
+                name="periodi_influenzano_prefestiva"
+                type="radio"
+                label="COM_MESSE_PARAMS_PERIODI_PREFESTIVA"
+                description="COM_MESSE_PARAMS_PERIODI_PREFESTIVA_DESC"
+                default="1"
+                layout="joomla.form.field.radio.switcher">
+                <option value="0">JNO</option>
+                <option value="1">JYES</option>
+            </field>
+
+            <field
+                name="test_mode"
+                type="radio"
+                label="COM_MESSE_TESTMODE"
+                description="COM_MESSE_TESTMODE_DESC"
+                default="0"
+                layout="joomla.form.field.radio.switcher">
+                <option value="0">JNO</option>
+                <option value="1">JYES</option>
+            </field>
+
+            <field
+                name="test_date"
+                type="text"
+                label="COM_MESSE_TESTMODE_DATA"
+                description="COM_MESSE_TESTMODE_DATA_DESC"
+                default="2026-12-24 20:00" />
+
+        </fieldset>
+
+    </fields>
+
+</metadata>
