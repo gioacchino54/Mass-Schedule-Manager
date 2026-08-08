@@ -142,6 +142,23 @@ Factory::getApplication()->getDocument()->addScriptDeclaration('
         </div>
     </div>
 
+    <!-- SABATO CON SOLENNITÀ -->
+    <div class="card mb-3">
+        <div class="card-header fw-bold">📅 <?= Text::_('COM_MESSE_SABATO_SOLENNITA_SEZIONE') ?></div>
+        <div class="card-body">
+            <p class="text-muted small mb-3"><?= Text::_('COM_MESSE_SABATO_SOLENNITA_NOTE') ?></p>
+            <?php $sabatoAttuale = $item->sabato_solennita ?? 'festivo'; ?>
+            <select name="jform[sabato_solennita]" class="form-select">
+                <option value="vigiliare" <?= $sabatoAttuale === 'vigiliare' ? 'selected' : '' ?>>
+                    <?= Text::_('COM_MESSE_SABATO_SOLENNITA_VIGILIARE') ?>
+                </option>
+                <option value="festivo" <?= $sabatoAttuale === 'festivo' ? 'selected' : '' ?>>
+                    <?= Text::_('COM_MESSE_SABATO_SOLENNITA_FESTIVO') ?>
+                </option>
+            </select>
+        </div>
+    </div>
+
     <!-- ORARI PER TIPO -->
     <?php foreach ($tipi as $tipoKey => $tipoLabel) : ?>
     <div class="card mb-3">

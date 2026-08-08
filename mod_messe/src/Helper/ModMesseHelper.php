@@ -218,6 +218,7 @@ class ModMesseHelper
         $vigiliaKey     = date('m-d', $pasqua - 86400);
 
         $modalitaPrefestiva = $chiesa->modalita_prefestiva ?? 'feriale_serale';
+        $sabatoSolennita    = $chiesa->sabato_solennita ?? 'festivo';
 
         $orari = ['feriale' => [], 'vigilia' => [], 'festivo' => [], 'prefestivo' => []];
         foreach ($chiesa->orari as $o) {
@@ -287,12 +288,9 @@ class ModMesseHelper
                 continue;
             }
 
-            if (isset($solennitaFisse[$md])) {
-                $nomeCelebrazione = $solennitaFisse[$md];
-                $tipo = 'festivo';
-            } elseif (isset($festeMobili[$md])) {
-                $nomeCelebrazione = $festeMobili[$md];
-                $tipo = 'festivo';
+            if (isset($solennitaFisse[$md]) || isset($festeMobili[$md])) {
+                $nomeCelebrazione = $solennitaFisse[$md] ?? $festeMobili[$md];
+                $tipo = ($w === 6 && $sabatoSolennita === 'vigiliare') ? 'vigilia' : 'festivo';
             } elseif ($w === 0) {
                 $tipo = 'festivo';
             } elseif ($w === 6) {

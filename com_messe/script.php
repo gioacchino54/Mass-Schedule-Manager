@@ -96,6 +96,9 @@ class Com_MesseInstallerScript
             $this->addColumnIfMissing($db, $tableChiese, 'modalita_prefestiva',
                 "ENUM('nessuna','vigiliare','dedicato','feriale_serale') NOT NULL DEFAULT 'feriale_serale' AFTER `minuti_veglia`"
             );
+            $this->addColumnIfMissing($db, $tableChiese, 'sabato_solennita',
+                "ENUM('vigiliare','festivo') NOT NULL DEFAULT 'festivo' AFTER `modalita_prefestiva`"
+            );
         }
 
         // 1b. Estende l'ENUM tipo di messe_orari per includere 'prefestivo'
@@ -338,6 +341,7 @@ class Com_MesseInstallerScript
                     `ora_veglia`    TINYINT(2) UNSIGNED NOT NULL DEFAULT 21,
                     `minuti_veglia` TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
                     `modalita_prefestiva` ENUM('nessuna','vigiliare','dedicato','feriale_serale') NOT NULL DEFAULT 'feriale_serale',
+                    `sabato_solennita` ENUM('vigiliare','festivo') NOT NULL DEFAULT 'festivo',
                     `published`     TINYINT(1)       NOT NULL DEFAULT 1,
                     `ordering`      INT(11)          NOT NULL DEFAULT 0,
                     `created`       DATETIME         NOT NULL DEFAULT '0000-00-00 00:00:00',

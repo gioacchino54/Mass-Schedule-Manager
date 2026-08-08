@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS `#__messe_chiese` (
     `ora_veglia`   TINYINT(2) UNSIGNED NOT NULL DEFAULT 21,
     `minuti_veglia`TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
     `modalita_prefestiva` ENUM('nessuna','vigiliare','dedicato','feriale_serale') NOT NULL DEFAULT 'feriale_serale',
+    `sabato_solennita` ENUM('vigiliare','festivo') NOT NULL DEFAULT 'festivo',
     `published`    TINYINT(1)       NOT NULL DEFAULT 1,
     `ordering`     INT(11)          NOT NULL DEFAULT 0,
     `created`      DATETIME         NOT NULL DEFAULT '0000-00-00 00:00:00',

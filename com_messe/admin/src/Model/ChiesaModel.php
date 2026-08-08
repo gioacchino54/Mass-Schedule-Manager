@@ -42,6 +42,7 @@ class ChiesaModel extends BaseDatabaseModel
                 'descrizione' => '',
                 'published'   => 1,
                 'modalita_prefestiva' => 'feriale_serale',
+                'sabato_solennita' => 'festivo',
             ];
         }
 
@@ -102,6 +103,8 @@ class ChiesaModel extends BaseDatabaseModel
                 'minuti_veglia' => min(59, max(0, (int) ($data['minuti_veglia'] ?? 0))),
                 'modalita_prefestiva' => in_array($data['modalita_prefestiva'] ?? '', ['nessuna', 'vigiliare', 'dedicato', 'feriale_serale'])
                                             ? $data['modalita_prefestiva'] : 'feriale_serale',
+                'sabato_solennita' => in_array($data['sabato_solennita'] ?? '', ['vigiliare', 'festivo'])
+                                            ? $data['sabato_solennita'] : 'festivo',
                 'modified'      => $now,
                 'modified_by'   => 0,
             ];

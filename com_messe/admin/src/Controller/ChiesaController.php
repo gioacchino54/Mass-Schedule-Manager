@@ -57,6 +57,8 @@ class ChiesaController extends BaseController
             'minuti_veglia' => min(59, max(0, (int) ($data['minuti_veglia'] ?? 0))),
             'modalita_prefestiva' => in_array($data['modalita_prefestiva'] ?? '', ['nessuna', 'vigiliare', 'dedicato', 'feriale_serale'])
                                 ? $data['modalita_prefestiva'] : 'feriale_serale',
+            'sabato_solennita' => in_array($data['sabato_solennita'] ?? '', ['vigiliare', 'festivo'])
+                                ? $data['sabato_solennita'] : 'festivo',
             'orari'       => $this->sanitizeOrari($data['orari'] ?? []),
             'eccezioni'   => $this->sanitizeEccezioni($data['eccezioni'] ?? []),
             'periodi'     => $this->sanitizePeriodi($data['periodi'] ?? []),
