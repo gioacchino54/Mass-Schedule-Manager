@@ -1,18 +1,22 @@
 # Changelog
 
-Tutte le modifiche rilevanti a `com_messe` e `mod_messe` sono documentate in questo file.
+Tutte le modifiche rilevanti a `com_messe`, `mod_messe` e al meccanismo di distribuzione/aggiornamento sono documentate in questo file.
+
+## [Meccanismo di aggiornamento] - non versionato (fix su pkg_messe.xml lato server)
+- **Fix critico**: il file `pkg_messe.xml` (descrittore update server) mancava del tag `<client>site</client>`. Senza questo tag, Joomla assegna di default `client_id = 1` (amministratore) a ogni `<update>`, che non corrisponde al `client_id` reale del pacchetto installato (`0`, "site") — l'aggiornamento veniva quindi scartato silenziosamente, senza nessun errore visibile, pur essendo il file XML raggiungibile e valido. Diagnosticato tramite CLI (`php cli/joomla.php update:extensions:check`) e confronto con il codice sorgente di `ExtensionAdapter.php` di Joomla.
+- Aggiunto anche il checksum `sha256` nel tag `<downloadurl>`, richiesto da Joomla per la convalida di integrità del pacchetto scaricato (altrimenti mostra un avviso di sicurezza dopo l'installazione).
+- Vedi [`distribution/README.md`](distribution/README.md) per la checklist da seguire ad ogni nuova release.
 
 ## [1.3.23] - pkg_messe
 - Corretti gli URL dell'update server e del footer da `http` a `https`.
+- Aggiunto footer con copyright e licenza (GNU GPL v2 o successiva) in fondo alle view backend "Chiese" (elenco) e "Chiesa" (aggiungi/modifica), con anno aggiornato automaticamente. *(com_messe 1.3.22)*
 
-## [1.3.22] - com_messe
-- Aggiunto un footer con copyright e licenza (GNU GPL v2 o successiva) in fondo alle view backend "Chiese" (elenco) e "Chiesa" (aggiungi/modifica), con anno aggiornato automaticamente.
-
-## [1.3.21] - com_messe
+## [1.3.21] - com_messe / pkg_messe 1.3.22
 - Cambiato il valore di default di "Giorni anticipo prefestive" da 14 a 5, per evitare che una prefestiva compaia nell'elenco molto più avanti nel tempo rispetto alle altre messe mostrate. Vincolo minimo del campo abbassato da 7 a 1.
 
-## [1.3.20] - com_messe
+## [1.3.20] - com_messe / pkg_messe 1.3.21
 - Fix: il form dei parametri della voce di menu "Orari Messe" era rimasto indietro e non includeva i campi relativi alla messa prefestiva aggiunti nelle versioni recenti. Ora configurabili anche per singola voce di menu.
+- Fix: cartella lingue del pacchetto spostata da `admin/language` a `language` (convenzione corretta per estensioni di tipo "package"), risolvendo la visualizzazione della chiave grezza `PKG_MESSE_XML_DESCRIPTION` invece del testo tradotto a fine installazione.
 
 ## [1.3.19] - com_messe
 - Fix: quando un periodo stagionale (es. "Orario Estivo") è attivo, la messa prefestiva ora si basa sull'orario stagionale realmente in vigore quel giorno. Aggiunta opzione facoltativa "Applica i periodi stagionali alla messa prefestiva" (attiva di default).
@@ -61,4 +65,4 @@ Tutte le modifiche rilevanti a `com_messe` e `mod_messe` sono documentate in que
 
 ---
 
-*Per la cronologia dettagliata di ogni singola versione, vedi i file in `com_messe/admin/sql/updates/mysql/`.*
+*Per la cronologia dettagliata di ogni singola versione del componente, vedi i file in `com_messe/admin/sql/updates/mysql/`.*
