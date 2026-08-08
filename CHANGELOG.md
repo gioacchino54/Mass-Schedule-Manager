@@ -2,6 +2,10 @@
 
 Tutte le modifiche rilevanti a `com_messe`, `mod_messe` e al meccanismo di distribuzione/aggiornamento sono documentate in questo file.
 
+## [1.3.24] - com_messe / pkg_messe
+- Nuova opzione per chiesa **"Sabato con Solennità"**: quando una solennità (fissa o mobile) cade proprio di sabato, determina se usare l'orario **Festivo** (default: tratta l'intera giornata come la solennità stessa) oppure l'orario **Vigiliare** (tratta comunque la sera come anticipo della domenica successiva). In precedenza il comportamento era sempre "festivo", senza possibilità di scelta.
+- Nuova colonna `messe_chiese.sabato_solennita` (`festivo` / `vigiliare`), migrata automaticamente su siti già esistenti.
+
 ## [Meccanismo di aggiornamento] - non versionato (fix su pkg_messe.xml lato server)
 - **Fix critico**: il file `pkg_messe.xml` (descrittore update server) mancava del tag `<client>site</client>`. Senza questo tag, Joomla assegna di default `client_id = 1` (amministratore) a ogni `<update>`, che non corrisponde al `client_id` reale del pacchetto installato (`0`, "site") — l'aggiornamento veniva quindi scartato silenziosamente, senza nessun errore visibile, pur essendo il file XML raggiungibile e valido. Diagnosticato tramite CLI (`php cli/joomla.php update:extensions:check`) e confronto con il codice sorgente di `ExtensionAdapter.php` di Joomla.
 - Aggiunto anche il checksum `sha256` nel tag `<downloadurl>`, richiesto da Joomla per la convalida di integrità del pacchetto scaricato (altrimenti mostra un avviso di sicurezza dopo l'installazione).
