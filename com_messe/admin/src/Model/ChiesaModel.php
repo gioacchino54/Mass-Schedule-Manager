@@ -77,6 +77,16 @@ class ChiesaModel extends BaseDatabaseModel
                 ->order('id ASC');
             $db->setQuery($query);
             $item->periodi = $db->loadObjectList();
+
+            $query = $db->getQuery(true)
+                ->select('*')
+                ->from($db->quoteName('#__messe_settimana_santa'))
+                ->where($db->quoteName('chiesa_id') . ' = ' . $pk)
+                ->order("FIELD(giorno_riferimento,'palme','lunedi_santo','martedi_santo','mercoledi_santo','giovedi_santo','venerdi_santo','sabato_santo') ASC, ora ASC");
+            $db->setQuery($query);
+            $item->settimanaSanta = $db->loadObjectList();
+        } else {
+            $item->settimanaSanta = [];
         }
 
         return $item;
@@ -170,6 +180,8 @@ class ChiesaModel extends BaseDatabaseModel
                         'minuti'    => (int) ($e['minuti'] ?? 0),
                         'label'     => trim($e['label'] ?? ''),
                         'luogo'     => !empty($e['luogo']) ? trim($e['luogo']) : null,
+                        'modalita'  => in_array($e['modalita'] ?? '', ['sostituisci', 'aggiungi'])
+                                        ? $e['modalita'] : 'sostituisci',
                         'published' => 1,
                     ];
                     $db->insertObject('#__messe_eccezioni', $r);
@@ -223,6 +235,35 @@ class ChiesaModel extends BaseDatabaseModel
                         'note'        => trim($p['note'] ?? ''),
                     ];
                     $db->insertObject('#__messe_periodi', $r);
+                }
+            }
+
+            // --- Salva Settimana Santa ---
+            $giorniValidi = ['palme','lunedi_santo','martedi_santo','mercoledi_santo','giovedi_santo','venerdi_santo','sabato_santo'];
+
+            $db->setQuery(
+                $db->getQuery(true)
+                    ->delete($db->quoteName('#__messe_settimana_santa'))
+                    ->where($db->quoteName('chiesa_id') . ' = ' . $id)
+            )->execute();
+
+            if (!empty($data['settimana_santa'])) {
+                foreach ($data['settimana_santa'] as $s) {
+                    if (empty(trim($s['label'] ?? ''))) continue;
+
+                    $r = (object) [
+                        'chiesa_id'          => $id,
+                        'giorno_riferimento' => in_array($s['giorno_riferimento'] ?? '', $giorniValidi)
+                                                    ? $s['giorno_riferimento'] : 'palme',
+                        'ora'       => min(23, max(0, (int) ($s['ora'] ?? 18))),
+                        'minuti'    => min(59, max(0, (int) ($s['minuti'] ?? 0))),
+                        'label'     => strip_tags(trim($s['label'])),
+                        'luogo'     => !empty($s['luogo']) ? strip_tags(trim($s['luogo'])) : null,
+                        'modalita'  => in_array($s['modalita'] ?? '', ['sostituisci', 'aggiungi'])
+                                        ? $s['modalita'] : 'aggiungi',
+                        'published' => 1,
+                    ];
+                    $db->insertObject('#__messe_settimana_santa', $r);
                 }
             }
 

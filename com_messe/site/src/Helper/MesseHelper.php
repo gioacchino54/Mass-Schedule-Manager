@@ -63,18 +63,25 @@ class MesseHelper
 
     public static function getFesteMobili(int $pasqua, string $rito = 'romano'): array
     {
+        // NB: si usa strtotime("±N days", ...) invece di sommare/sottrarre
+        // N*86400 secondi, perché quest'ultimo approccio è vulnerabile al
+        // cambio dell'ora legale: se il periodo attraversa la data del
+        // cambio ora (fine marzo o fine ottobre), sottrarre/sommare secondi
+        // grezzi sbaglia di un'ora e può far "slittare" il calcolo sul
+        // giorno di calendario sbagliato.
         $feste = [
-            date('m-d', $pasqua)                  => Text::_('COM_MESSE_FESTA_PASQUA'),
-            date('m-d', $pasqua + 1  * 86400)      => Text::_('COM_MESSE_FESTA_LUNEDI_ANGELO'),
-            date('m-d', $pasqua + 39 * 86400)      => Text::_('COM_MESSE_FESTA_ASCENSIONE'),
-            date('m-d', $pasqua + 49 * 86400)      => Text::_('COM_MESSE_FESTA_PENTECOSTE'),
-            date('m-d', $pasqua + 50 * 86400)      => Text::_('COM_MESSE_FESTA_LUNEDI_PENTECOSTE'),
-            date('m-d', $pasqua + 60 * 86400)      => Text::_('COM_MESSE_FESTA_CORPUS_DOMINI'),
-            date('m-d', $pasqua + 68 * 86400)      => Text::_('COM_MESSE_FESTA_SACRO_CUORE'),
+            date('m-d', strtotime('-7 days', $pasqua))  => Text::_('COM_MESSE_FESTA_DOMENICA_PALME'),
+            date('m-d', $pasqua)                        => Text::_('COM_MESSE_FESTA_PASQUA'),
+            date('m-d', strtotime('+1 days', $pasqua))  => Text::_('COM_MESSE_FESTA_LUNEDI_ANGELO'),
+            date('m-d', strtotime('+39 days', $pasqua)) => Text::_('COM_MESSE_FESTA_ASCENSIONE'),
+            date('m-d', strtotime('+49 days', $pasqua)) => Text::_('COM_MESSE_FESTA_PENTECOSTE'),
+            date('m-d', strtotime('+50 days', $pasqua)) => Text::_('COM_MESSE_FESTA_LUNEDI_PENTECOSTE'),
+            date('m-d', strtotime('+60 days', $pasqua)) => Text::_('COM_MESSE_FESTA_CORPUS_DOMINI'),
+            date('m-d', strtotime('+68 days', $pasqua)) => Text::_('COM_MESSE_FESTA_SACRO_CUORE'),
         ];
 
         if ($rito === 'ambrosiano') {
-            $feste[date('m-d', $pasqua + 7 * 86400)] = Text::_('COM_MESSE_FESTA_DOMENICA_ALBIS');
+            $feste[date('m-d', strtotime('+7 days', $pasqua))] = Text::_('COM_MESSE_FESTA_DOMENICA_ALBIS');
         }
 
         return $feste;
@@ -169,7 +176,7 @@ class MesseHelper
         $solennitaFisse = self::getSolennitaFisse($rito);
         $festeMobili    = self::getFesteMobili($pasqua, $rito);
         $giorniNomi     = self::getGiorni();
-        $vigiliaKey     = date('m-d', $pasqua - 86400);
+        $vigiliaKey     = date('m-d', strtotime('-1 days', $pasqua));
 
         $modalitaPrefestiva = $chiesa->modalita_prefestiva ?? 'feriale_serale';
         $sabatoSolennita    = $chiesa->sabato_solennita ?? 'festivo';
@@ -188,19 +195,49 @@ class MesseHelper
         $eccezioni = [];
         foreach ($chiesa->eccezioni as $e) {
             $eccezioni[$e->data_md][] = [
-                'h'     => (int) $e->ora,
-                'm'     => (int) $e->minuti,
-                'label' => $e->label,
-                'luogo' => $e->luogo ?? null,
+                'h'        => (int) $e->ora,
+                'm'        => (int) $e->minuti,
+                'label'    => $e->label,
+                'luogo'    => $e->luogo ?? null,
+                'modalita' => $e->modalita ?? 'sostituisci',
             ];
         }
 
         if (!isset($eccezioni[$vigiliaKey])) {
             $eccezioni[$vigiliaKey][] = [
-                'h'     => (int) ($chiesa->ora_veglia    ?? 21),
-                'm'     => (int) ($chiesa->minuti_veglia ?? 0),
-                'label' => Text::_('COM_MESSE_FESTA_VEGLIA_PASQUALE'),
-                'luogo' => null,
+                'h'        => (int) ($chiesa->ora_veglia    ?? 21),
+                'm'        => (int) ($chiesa->minuti_veglia ?? 0),
+                'label'    => Text::_('COM_MESSE_FESTA_VEGLIA_PASQUALE'),
+                'luogo'    => null,
+                'modalita' => 'sostituisci',
+            ];
+        }
+
+        // Settimana Santa: i riti sono definiti per "giorno di riferimento"
+        // (es. "giovedi_santo") anziché per data fissa, perché la Pasqua si
+        // sposta ogni anno. Qui si calcola la data esatta (AAAA-MM-GG) di
+        // ciascun giorno per l'anno corrente, e si raggruppano i riti per
+        // quella data.
+        $offsetSettimanaSanta = [
+            'palme'           => -7,
+            'lunedi_santo'    => -6,
+            'martedi_santo'   => -5,
+            'mercoledi_santo' => -4,
+            'giovedi_santo'   => -3,
+            'venerdi_santo'   => -2,
+            'sabato_santo'    => -1,
+        ];
+        $settimanaSantaByDate = [];
+        foreach ($chiesa->settimanaSanta ?? [] as $s) {
+            $offset = $offsetSettimanaSanta[$s->giorno_riferimento] ?? null;
+            if ($offset === null) continue;
+            $dataRito = date('Y-m-d', strtotime(($offset >= 0 ? '+' : '') . $offset . ' days', $pasqua));
+            $settimanaSantaByDate[$dataRito][] = [
+                'h'        => (int) $s->ora,
+                'm'        => (int) $s->minuti,
+                'label'    => $s->label,
+                'luogo'    => $s->luogo ?? null,
+                'modalita' => $s->modalita ?? 'aggiungi',
             ];
         }
 
@@ -213,12 +250,20 @@ class MesseHelper
 
             $giorno           = strtotime("+$i day", $now);
             $md               = date('m-d', $giorno);
+            $ymd              = date('Y-m-d', $giorno);
             $w                = (int) date('w', $giorno);
             $nomeCelebrazione = null;
 
-            if (isset($eccezioni[$md])) {
+            // Unifica eccezioni puntuali (data fissa gg-mm) e riti di
+            // Settimana Santa (data calcolata dalla Pasqua) in un unico
+            // elenco di "eventi speciali" per il giorno corrente.
+            $eventiSpeciali = [];
+            if (isset($eccezioni[$md]))            $eventiSpeciali = array_merge($eventiSpeciali, $eccezioni[$md]);
+            if (isset($settimanaSantaByDate[$ymd])) $eventiSpeciali = array_merge($eventiSpeciali, $settimanaSantaByDate[$ymd]);
+
+            if (!empty($eventiSpeciali)) {
                 if ($i <= $windowSpeciali) {
-                    foreach ($eccezioni[$md] as $ec) {
+                    foreach ($eventiSpeciali as $ec) {
                         $ts = mktime((int)$ec['h'], (int)$ec['m'], 0,
                             (int) date('m', $giorno),
                             (int) date('d', $giorno),
@@ -239,10 +284,36 @@ class MesseHelper
                         }
                     }
                 }
-                continue;
-            }
+                // Se ALMENO un evento speciale di quel giorno è in modalità
+                // "sostituisci" (default per le eccezioni, per compatibilità
+                // con le versioni precedenti), l'orario normale del giorno
+                // viene saltato come sempre. Se TUTTI gli eventi sono in
+                // modalità "aggiungi", il calcolo prosegue e l'orario
+                // normale del giorno (feriale/vigilia/festivo) viene
+                // mostrato insieme alle celebrazioni speciali (es. 24
+                // dicembre feriale + Messa di Natale; Via Crucis + messa
+                // feriale del mattino in Settimana Santa).
+                $tutteAggiuntive = true;
+                foreach ($eventiSpeciali as $ec) {
+                    if (($ec['modalita'] ?? 'sostituisci') !== 'aggiungi') {
+                        $tutteAggiuntive = false;
+                        break;
+                    }
+                }
+                if (!$tutteAggiuntive) {
+                    continue;
+                }
 
-            if (isset($solennitaFisse[$md]) || isset($festeMobili[$md])) {
+                // Il giorno ha solo eventi speciali "aggiuntivi": mostra
+                // l'orario NORMALE del giorno della settimana
+                // (feriale/vigilia/festivo in base al giorno), bypassando
+                // il rilevamento automatico di solennità/prefestivo.
+                $tipo = match (true) {
+                    $w === 0 => 'festivo',
+                    $w === 6 => 'vigilia',
+                    default  => 'feriale',
+                };
+            } elseif (isset($solennitaFisse[$md]) || isset($festeMobili[$md])) {
                 $nomeCelebrazione = $solennitaFisse[$md] ?? $festeMobili[$md];
                 // Se la solennità cade proprio di sabato, l'orario da usare
                 // per quella sera dipende dall'opzione configurata sulla
@@ -263,8 +334,8 @@ class MesseHelper
                 // quindi NON hanno giorno prefestivo — rimane vigiliare normale
                 if ($isDomaniF && $rito === 'ambrosiano') {
                     $festeDomenicaAmbrosiano = [
-                        date('m-d', $pasqua + 49 * 86400), // Pentecoste
-                        date('m-d', $pasqua + 39 * 86400), // Ascensione (domenica nel rito ambrosiano)
+                        date('m-d', strtotime('+49 days', $pasqua)), // Pentecoste
+                        date('m-d', strtotime('+39 days', $pasqua)), // Ascensione (domenica nel rito ambrosiano)
                     ];
                     if (in_array($mdDomani, $festeDomenicaAmbrosiano)) {
                         $isDomaniF = false;
@@ -429,6 +500,22 @@ class MesseHelper
         }
 
         usort($elencoMesse, fn($a, $b) => $a['ts'] <=> $b['ts']);
+
+        // Ricalcola "prossima" scorrendo l'elenco già ordinato cronologicamente,
+        // invece di fidarsi dell'ordine con cui le voci sono state elaborate nel
+        // ciclo sopra (che può non coincidere con l'ordine cronologico, ad es.
+        // quando un'eccezione in modalità "aggiungi" — es. Messa di Natale alle
+        // 23:00 — viene elaborata prima dell'orario feriale normale dello stesso
+        // giorno alle 9:00, che è però cronologicamente più vicino).
+        $prossima = null; $labelPross = null; $luogoPross = null;
+        foreach ($elencoMesse as $m) {
+            if ($m['ts'] > $now) {
+                $prossima   = $m['ts'];
+                $labelPross = $m['label'] ?? null;
+                $luogoPross = $m['luogo'] ?? null;
+                break;
+            }
+        }
 
         return [
             'prossima' => $prossima ? [

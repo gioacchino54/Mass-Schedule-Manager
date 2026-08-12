@@ -62,6 +62,7 @@ class ChiesaController extends BaseController
             'orari'       => $this->sanitizeOrari($data['orari'] ?? []),
             'eccezioni'   => $this->sanitizeEccezioni($data['eccezioni'] ?? []),
             'periodi'     => $this->sanitizePeriodi($data['periodi'] ?? []),
+            'settimana_santa' => $this->sanitizeSettimanaSanta($data['settimana_santa'] ?? []),
         ];
     }
 
@@ -101,6 +102,32 @@ class ChiesaController extends BaseController
                 'minuti'  => min(59, max(0, (int) ($e['minuti'] ?? 0))),
                 'label'   => strip_tags(trim($e['label'] ?? '')),
                 'luogo'   => strip_tags(trim($e['luogo'] ?? '')),
+                'modalita' => in_array($e['modalita'] ?? '', ['sostituisci', 'aggiungi'])
+                                ? $e['modalita'] : 'sostituisci',
+            ];
+        }
+
+        return $result;
+    }
+
+    private function sanitizeSettimanaSanta(array $righe): array
+    {
+        $result = [];
+        $giorniValidi = ['palme','lunedi_santo','martedi_santo','mercoledi_santo','giovedi_santo','venerdi_santo','sabato_santo'];
+
+        foreach ($righe as $idx => $s) {
+            $label = strip_tags(trim($s['label'] ?? ''));
+            if (empty($label)) continue;
+
+            $result[(int) $idx] = [
+                'giorno_riferimento' => in_array($s['giorno_riferimento'] ?? '', $giorniValidi)
+                                            ? $s['giorno_riferimento'] : 'palme',
+                'ora'      => min(23, max(0, (int) ($s['ora'] ?? 18))),
+                'minuti'   => min(59, max(0, (int) ($s['minuti'] ?? 0))),
+                'label'    => $label,
+                'luogo'    => strip_tags(trim($s['luogo'] ?? '')),
+                'modalita' => in_array($s['modalita'] ?? '', ['sostituisci', 'aggiungi'])
+                                ? $s['modalita'] : 'aggiungi',
             ];
         }
 

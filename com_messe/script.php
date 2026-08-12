@@ -54,6 +54,7 @@ class Com_MesseInstallerScript
             $prefix . 'messe_eccezioni',
             $prefix . 'messe_orari',
             $prefix . 'messe_periodi',
+            $prefix . 'messe_settimana_santa',
             $prefix . 'messe_chiese',
         ];
 
@@ -101,6 +102,14 @@ class Com_MesseInstallerScript
             );
         }
 
+        // 1c. Aggiunge la colonna modalita a messe_eccezioni se mancante
+        $tableEccezioniMig = $prefix . 'messe_eccezioni';
+        if (in_array($tableEccezioniMig, $tables)) {
+            $this->addColumnIfMissing($db, $tableEccezioniMig, 'modalita',
+                "ENUM('sostituisci','aggiungi') NOT NULL DEFAULT 'sostituisci' AFTER `luogo`"
+            );
+        }
+
         // 1b. Estende l'ENUM tipo di messe_orari per includere 'prefestivo'
         //     (idempotente: rieseguirlo non ha effetti collaterali)
         $tableOrari = $prefix . 'messe_orari';
@@ -139,6 +148,29 @@ class Com_MesseInstallerScript
                 $db->execute();
             } catch (\Exception $e) {
                 Log::add('com_messe: errore tabella periodi: ' . $e->getMessage(), Log::WARNING, 'com_messe');
+            }
+        }
+
+        // 2b. Crea tabella settimana santa se non esiste
+        $tableSettimanaSanta = $prefix . 'messe_settimana_santa';
+        if (!in_array($tableSettimanaSanta, $tables)) {
+            try {
+                $db->setQuery("CREATE TABLE IF NOT EXISTS `{$tableSettimanaSanta}` (
+                    `id`         INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+                    `chiesa_id`  INT(11) UNSIGNED NOT NULL,
+                    `giorno_riferimento` ENUM('palme','lunedi_santo','martedi_santo','mercoledi_santo','giovedi_santo','venerdi_santo','sabato_santo') NOT NULL DEFAULT 'palme',
+                    `ora`        TINYINT(2) UNSIGNED NOT NULL DEFAULT 18,
+                    `minuti`     TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
+                    `label`      VARCHAR(255)     NOT NULL DEFAULT '',
+                    `luogo`      VARCHAR(255)     DEFAULT NULL,
+                    `modalita`   ENUM('sostituisci','aggiungi') NOT NULL DEFAULT 'aggiungi',
+                    `published`  TINYINT(1)       NOT NULL DEFAULT 1,
+                    PRIMARY KEY (`id`),
+                    KEY `idx_chiesa_giorno` (`chiesa_id`, `giorno_riferimento`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+                $db->execute();
+            } catch (\Exception $e) {
+                Log::add('com_messe: errore tabella settimana santa: ' . $e->getMessage(), Log::WARNING, 'com_messe');
             }
         }
 
@@ -386,6 +418,7 @@ class Com_MesseInstallerScript
                     `minuti`     TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
                     `label`      VARCHAR(255) NOT NULL DEFAULT '',
                     `luogo`      VARCHAR(255) DEFAULT NULL,
+                    `modalita`   ENUM('sostituisci','aggiungi') NOT NULL DEFAULT 'sostituisci',
                     `published`  TINYINT(1)   NOT NULL DEFAULT 1,
                     PRIMARY KEY (`id`),
                     KEY `idx_chiesa_data` (`chiesa_id`, `data_md`)

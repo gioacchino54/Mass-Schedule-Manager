@@ -1,0 +1,22 @@
+-- Gestione Orari Messe by Gioacchino Cipriano
+-- Update 1.3.26:
+-- 1) Nuova sezione "Settimana Santa" per ogni chiesa: riti particolari
+--    (Via Crucis, Confessioni, Cena del Signore, ecc.) inseribili per
+--    giorno di riferimento (Domenica delle Palme, Lunedì-Mercoledì
+--    Santo, Giovedì Santo, Venerdì Santo, Sabato Santo di giorno), con
+--    data calcolata automaticamente ogni anno in base alla Pasqua. Ogni
+--    rito ha una modalità "aggiungi" (si somma all'orario normale del
+--    giorno, default) o "sostituisci" (lo sostituisce interamente —
+--    utile per Giovedì/Venerdì Santo). Nuova tabella
+--    messe_settimana_santa.
+-- 2) FIX IMPORTANTE (cambio ora legale): il calcolo delle feste mobili
+--    (Domenica delle Palme, Ascensione, Pentecoste, Corpus Domini,
+--    Sacro Cuore, ecc.) e della Veglia Pasquale usava aritmetica su
+--    secondi grezzi (N*86400) per sommare/sottrarre giorni dalla data
+--    di Pasqua — un metodo vulnerabile al cambio dell'ora legale: se il
+--    periodo attraversa la data del cambio ora (fine marzo o fine
+--    ottobre), il calcolo sbagliava di un'ora e poteva risultare nel
+--    giorno di calendario sbagliato (riscontrato con la Domenica delle
+--    Palme 2026, che cade proprio il giorno del cambio ora). Sostituita
+--    con aritmetica basata su strtotime(), sicura rispetto al cambio ora.
+SELECT 1;

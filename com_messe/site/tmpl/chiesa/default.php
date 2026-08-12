@@ -50,7 +50,7 @@ function renderOrariChiesa(object $c, array $orari, array $gruppi): void
                     font-size:0.8rem;
                     font-weight:600;
                     border:1px solid <?= in_array($c->rito, ['romano','ambrosiano']) ? ($c->rito === 'ambrosiano' ? '#0dcaf0' : '#6c757d') : '#6c757d' ?>;
-                    color:<?= $c->rito === 'ambrosiano' ? '#087990' : '#495057' ?>;
+                    color:<?= $c->rito === 'ambrosiano' ? '#06748b' : '#495057' ?>;
                     background:<?= $c->rito === 'ambrosiano' ? 'rgba(13,202,240,0.1)' : 'rgba(108,117,125,0.1)' ?>;
                 ">
                     <?= \Joomla\CMS\Language\Text::_($c->rito === 'ambrosiano' ? 'COM_MESSE_RITO_AMBROSIANO' : 'COM_MESSE_RITO_ROMANO') ?>

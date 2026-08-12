@@ -245,23 +245,116 @@ Factory::getApplication()->getDocument()->addScriptDeclaration('
                                name="jform[eccezioni][<?= $idx ?>][minuti]"
                                value="<?= (int) $e->minuti ?>" />
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <label class="form-label form-label-sm"><?= Text::_('COM_MESSE_CAMPO_DESCRIZIONE_CELEBRAZIONE') ?></label>
                         <input type="text" class="form-control form-control-sm"
                                name="jform[eccezioni][<?= $idx ?>][label]"
                                value="<?= $this->escape($e->label ?? '') ?>"
                                placeholder="es. Messa della Notte di Natale" />
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <label class="form-label form-label-sm"><?= Text::_('COM_MESSE_CAMPO_LUOGO') ?></label>
                         <input type="text" class="form-control form-control-sm"
                                name="jform[eccezioni][<?= $idx ?>][luogo]"
                                value="<?= $this->escape($e->luogo ?? '') ?>"
                                placeholder="es. Chiesa parrocchiale" />
                     </div>
+                    <div class="col-md-2">
+                        <label class="form-label form-label-sm" title="<?= Text::_('COM_MESSE_CAMPO_MODALITA_ECCEZIONE_DESC') ?>"><?= Text::_('COM_MESSE_CAMPO_MODALITA_ECCEZIONE') ?></label>
+                        <select class="form-select form-select-sm" name="jform[eccezioni][<?= $idx ?>][modalita]">
+                            <option value="sostituisci" <?= ($e->modalita ?? 'sostituisci') === 'sostituisci' ? 'selected' : '' ?>>
+                                <?= Text::_('COM_MESSE_MODALITA_ECCEZIONE_SOSTITUISCI') ?>
+                            </option>
+                            <option value="aggiungi" <?= ($e->modalita ?? 'sostituisci') === 'aggiungi' ? 'selected' : '' ?>>
+                                <?= Text::_('COM_MESSE_MODALITA_ECCEZIONE_AGGIUNGI') ?>
+                            </option>
+                        </select>
+                    </div>
                     <div class="col-md-1">
                         <button type="button" class="btn btn-sm btn-danger w-100"
                                 onclick="this.closest('.eccezione-row').remove()">✕</button>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+
+    <!-- SETTIMANA SANTA -->
+    <div class="card mb-3">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span class="fw-bold">🕊️ <?= Text::_('COM_MESSE_SETTIMANA_SANTA_SEZIONE') ?></span>
+            <button type="button" class="btn btn-sm btn-success"
+                    onclick="aggiungiRitoSettimanaSanta()">
+                <?= Text::_('COM_MESSE_BTN_AGGIUNGI_RITO') ?>
+            </button>
+        </div>
+        <div class="card-body p-2">
+            <p class="text-muted small mb-2"><?= Text::_('COM_MESSE_SETTIMANA_SANTA_NOTE') ?></p>
+            <div id="settimana-santa-lista">
+                <?php
+                $giorniSettimanaSanta = [
+                    'palme'            => Text::_('COM_MESSE_GIORNO_SS_PALME'),
+                    'lunedi_santo'     => Text::_('COM_MESSE_GIORNO_SS_LUNEDI'),
+                    'martedi_santo'    => Text::_('COM_MESSE_GIORNO_SS_MARTEDI'),
+                    'mercoledi_santo'  => Text::_('COM_MESSE_GIORNO_SS_MERCOLEDI'),
+                    'giovedi_santo'    => Text::_('COM_MESSE_GIORNO_SS_GIOVEDI'),
+                    'venerdi_santo'    => Text::_('COM_MESSE_GIORNO_SS_VENERDI'),
+                    'sabato_santo'     => Text::_('COM_MESSE_GIORNO_SS_SABATO'),
+                ];
+                ?>
+                <?php foreach ($item->settimanaSanta ?? [] as $idx => $s) : ?>
+                <div class="row g-2 mb-2 align-items-end settimana-santa-row">
+                    <div class="col-md-2">
+                        <label class="form-label form-label-sm"><?= Text::_('COM_MESSE_CAMPO_GIORNO_RIFERIMENTO') ?></label>
+                        <select class="form-select form-select-sm" name="jform[settimana_santa][<?= $idx ?>][giorno_riferimento]">
+                            <?php foreach ($giorniSettimanaSanta as $gKey => $gLabel) : ?>
+                            <option value="<?= $gKey ?>" <?= $s->giorno_riferimento === $gKey ? 'selected' : '' ?>>
+                                <?= $gLabel ?>
+                            </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col-md-1">
+                        <label class="form-label form-label-sm"><?= Text::_('COM_MESSE_CAMPO_ORA') ?></label>
+                        <input type="number" class="form-control form-control-sm" min="0" max="23"
+                               name="jform[settimana_santa][<?= $idx ?>][ora]"
+                               value="<?= (int) $s->ora ?>" />
+                    </div>
+                    <div class="col-md-1">
+                        <label class="form-label form-label-sm"><?= Text::_('COM_MESSE_CAMPO_MINUTI') ?></label>
+                        <input type="number" class="form-control form-control-sm" min="0" max="59" step="5"
+                               name="jform[settimana_santa][<?= $idx ?>][minuti]"
+                               value="<?= (int) $s->minuti ?>" />
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label form-label-sm"><?= Text::_('COM_MESSE_CAMPO_NOME_RITO') ?></label>
+                        <input type="text" class="form-control form-control-sm"
+                               name="jform[settimana_santa][<?= $idx ?>][label]"
+                               value="<?= $this->escape($s->label ?? '') ?>"
+                               placeholder="es. Via Crucis" />
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label form-label-sm"><?= Text::_('COM_MESSE_CAMPO_LUOGO') ?></label>
+                        <input type="text" class="form-control form-control-sm"
+                               name="jform[settimana_santa][<?= $idx ?>][luogo]"
+                               value="<?= $this->escape($s->luogo ?? '') ?>"
+                               placeholder="es. Vie cittadine" />
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label form-label-sm" title="<?= Text::_('COM_MESSE_CAMPO_MODALITA_ECCEZIONE_DESC') ?>"><?= Text::_('COM_MESSE_CAMPO_MODALITA_ECCEZIONE') ?></label>
+                        <select class="form-select form-select-sm" name="jform[settimana_santa][<?= $idx ?>][modalita]">
+                            <option value="aggiungi" <?= ($s->modalita ?? 'aggiungi') === 'aggiungi' ? 'selected' : '' ?>>
+                                <?= Text::_('COM_MESSE_MODALITA_ECCEZIONE_AGGIUNGI') ?>
+                            </option>
+                            <option value="sostituisci" <?= ($s->modalita ?? 'aggiungi') === 'sostituisci' ? 'selected' : '' ?>>
+                                <?= Text::_('COM_MESSE_MODALITA_ECCEZIONE_SOSTITUISCI') ?>
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-1">
+                        <button type="button" class="btn btn-sm btn-danger w-100"
+                                onclick="this.closest('.settimana-santa-row').remove()">✕</button>
                     </div>
                 </div>
                 <?php endforeach; ?>
@@ -423,6 +516,7 @@ Factory::getApplication()->getDocument()->addScriptDeclaration('
 let orarioIdx    = { feriale: 9000, vigilia: 9000, festivo: 9000, prefestivo: 9000 };
 let eccezioneIdx = 9000;
 let periodoIdx   = 9000;
+let settimanaSantaIdx = 9000;
 let orarioSostIdx = 9000;
 
 function aggiungiOrario(tipo) {
@@ -480,21 +574,80 @@ function aggiungiEccezione() {
             <input type="number" class="form-control form-control-sm" min="0" max="59" step="5"
                    name="jform[eccezioni][${idx}][minuti]" value="0" />
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
             <label class="form-label form-label-sm">Descrizione</label>
             <input type="text" class="form-control form-control-sm"
                    name="jform[eccezioni][${idx}][label]"
                    placeholder="es. Messa della Notte di Natale" />
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
             <label class="form-label form-label-sm">Luogo (opzionale)</label>
             <input type="text" class="form-control form-control-sm"
                    name="jform[eccezioni][${idx}][luogo]"
                    placeholder="es. Chiesa parrocchiale" />
         </div>
+        <div class="col-md-2">
+            <label class="form-label form-label-sm" title="Sostituisci = sostituisce l'orario normale del giorno. Aggiungi = si somma all'orario normale del giorno (es. 24 dicembre)">Modalità</label>
+            <select class="form-select form-select-sm" name="jform[eccezioni][${idx}][modalita]">
+                <option value="sostituisci">Sostituisci orario normale</option>
+                <option value="aggiungi">Aggiungi a orario normale</option>
+            </select>
+        </div>
         <div class="col-md-1">
             <button type="button" class="btn btn-sm btn-danger w-100"
                     onclick="this.closest('.eccezione-row').remove()">✕</button>
+        </div>
+    </div>`);
+}
+
+function aggiungiRitoSettimanaSanta() {
+    const idx = settimanaSantaIdx++;
+    document.getElementById('settimana-santa-lista').insertAdjacentHTML('beforeend', `
+    <div class="row g-2 mb-2 align-items-end settimana-santa-row">
+        <div class="col-md-2">
+            <label class="form-label form-label-sm">Giorno</label>
+            <select class="form-select form-select-sm" name="jform[settimana_santa][${idx}][giorno_riferimento]">
+                <option value="palme">Domenica delle Palme</option>
+                <option value="lunedi_santo">Lunedì Santo</option>
+                <option value="martedi_santo">Martedì Santo</option>
+                <option value="mercoledi_santo">Mercoledì Santo</option>
+                <option value="giovedi_santo">Giovedì Santo</option>
+                <option value="venerdi_santo">Venerdì Santo</option>
+                <option value="sabato_santo">Sabato Santo (di giorno)</option>
+            </select>
+        </div>
+        <div class="col-md-1">
+            <label class="form-label form-label-sm">Ora</label>
+            <input type="number" class="form-control form-control-sm" min="0" max="23"
+                   name="jform[settimana_santa][${idx}][ora]" value="18" />
+        </div>
+        <div class="col-md-1">
+            <label class="form-label form-label-sm">Min</label>
+            <input type="number" class="form-control form-control-sm" min="0" max="59" step="5"
+                   name="jform[settimana_santa][${idx}][minuti]" value="0" />
+        </div>
+        <div class="col-md-2">
+            <label class="form-label form-label-sm">Nome del rito</label>
+            <input type="text" class="form-control form-control-sm"
+                   name="jform[settimana_santa][${idx}][label]"
+                   placeholder="es. Via Crucis" />
+        </div>
+        <div class="col-md-2">
+            <label class="form-label form-label-sm">Luogo (opzionale)</label>
+            <input type="text" class="form-control form-control-sm"
+                   name="jform[settimana_santa][${idx}][luogo]"
+                   placeholder="es. Vie cittadine" />
+        </div>
+        <div class="col-md-2">
+            <label class="form-label form-label-sm" title="Sostituisci = sostituisce l'orario normale del giorno. Aggiungi = si somma all'orario normale del giorno">Modalità</label>
+            <select class="form-select form-select-sm" name="jform[settimana_santa][${idx}][modalita]">
+                <option value="aggiungi" selected>Aggiungi a orario normale</option>
+                <option value="sostituisci">Sostituisci orario normale</option>
+            </select>
+        </div>
+        <div class="col-md-1">
+            <button type="button" class="btn btn-sm btn-danger w-100"
+                    onclick="this.closest('.settimana-santa-row').remove()">✕</button>
         </div>
     </div>`);
 }

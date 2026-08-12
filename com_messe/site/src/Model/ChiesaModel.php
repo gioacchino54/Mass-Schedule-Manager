@@ -55,6 +55,15 @@ class ChiesaModel extends BaseDatabaseModel
         $db->setQuery($query);
         $chiesa->periodi = $db->loadObjectList();
 
+        // Settimana Santa
+        $query = $db->getQuery(true)
+            ->select('*')
+            ->from($db->quoteName('#__messe_settimana_santa'))
+            ->where($db->quoteName('chiesa_id') . ' = ' . $id)
+            ->where($db->quoteName('published') . ' = 1');
+        $db->setQuery($query);
+        $chiesa->settimanaSanta = $db->loadObjectList();
+
         return $chiesa;
     }
 

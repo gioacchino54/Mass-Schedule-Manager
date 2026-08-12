@@ -1,0 +1,18 @@
+-- Gestione Orari Messe by Gioacchino Cipriano
+-- Update 1.3.25:
+-- 1) Aggiunta la Domenica delle Palme all'elenco delle feste mobili
+--    riconosciute (etichetta visualizzata sul frontend, nessuna modifica
+--    di schema/comportamento oltre alla nuova etichetta).
+-- 2) Nuova colonna messe_eccezioni.modalita ('sostituisci' / 'aggiungi',
+--    default 'sostituisci' per compatibilità). In modalità "aggiungi",
+--    l'eccezione (es. Messa della Notte di Natale il 24 dicembre) si
+--    somma all'orario normale del giorno della settimana invece di
+--    sostituirlo interamente — utile per il 24 dicembre quando cade in
+--    un giorno feriale, che manteneva finora solo la celebrazione
+--    speciale nascondendo la messa feriale del mattino. Il rilevamento
+--    automatico "prefestivo" viene inoltre bypassato per i giorni con
+--    eccezione aggiuntiva, dato che la celebrazione speciale è già
+--    gestita manualmente. Corretto anche il calcolo di "prossima messa"
+--    perché scelga sempre l'orario cronologicamente più vicino invece di
+--    fissarsi sul primo elaborato nel ciclo interno.
+SELECT 1;

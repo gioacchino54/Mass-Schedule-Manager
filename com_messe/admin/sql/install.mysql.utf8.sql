@@ -41,6 +41,7 @@ CREATE TABLE IF NOT EXISTS `#__messe_eccezioni` (
     `minuti`     TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
     `label`      VARCHAR(255) NOT NULL DEFAULT '',
     `luogo`      VARCHAR(255) DEFAULT NULL,
+    `modalita`   ENUM('sostituisci','aggiungi') NOT NULL DEFAULT 'sostituisci',
     `published`  TINYINT(1)   NOT NULL DEFAULT 1,
     PRIMARY KEY (`id`),
     KEY `idx_chiesa_data` (`chiesa_id`, `data_md`)
@@ -61,4 +62,18 @@ CREATE TABLE IF NOT EXISTS `#__messe_periodi` (
     `note`        VARCHAR(255) DEFAULT NULL,
     PRIMARY KEY (`id`),
     KEY `idx_chiesa` (`chiesa_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `#__messe_settimana_santa` (
+    `id`         INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `chiesa_id`  INT(11) UNSIGNED NOT NULL,
+    `giorno_riferimento` ENUM('palme','lunedi_santo','martedi_santo','mercoledi_santo','giovedi_santo','venerdi_santo','sabato_santo') NOT NULL DEFAULT 'palme',
+    `ora`        TINYINT(2) UNSIGNED NOT NULL DEFAULT 18,
+    `minuti`     TINYINT(2) UNSIGNED NOT NULL DEFAULT 0,
+    `label`      VARCHAR(255) NOT NULL DEFAULT '',
+    `luogo`      VARCHAR(255) DEFAULT NULL,
+    `modalita`   ENUM('sostituisci','aggiungi') NOT NULL DEFAULT 'aggiungi',
+    `published`  TINYINT(1)   NOT NULL DEFAULT 1,
+    PRIMARY KEY (`id`),
+    KEY `idx_chiesa_giorno` (`chiesa_id`, `giorno_riferimento`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
