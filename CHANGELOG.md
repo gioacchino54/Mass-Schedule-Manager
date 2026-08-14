@@ -2,6 +2,14 @@
 
 Tutte le modifiche rilevanti a `com_messe`, `mod_messe` e al meccanismo di distribuzione/aggiornamento sono documentate in questo file.
 
+## [1.3.27] - com_messe / pkg_messe (mod_messe 1.1.11)
+- **Nomi liturgici tradizionali per le domeniche di Avvento e Quaresima**, distinti per rito:
+  - Avvento romano (4 domeniche): Ad te levavi, Populus Sion, Gaudete, Rorate.
+  - Avvento ambrosiano (6 domeniche): della Venuta del Signore, dei Figli del Regno, delle Profezie adempiute, dell'Ingresso del Messia, del Precursore, della Divina Maternità.
+  - Quaresima romana (5 domeniche, la 6ª è la Domenica delle Palme già gestita): Invocavit, Reminiscere, Oculi, Laetare, Judica.
+  - Quaresima ambrosiana (5 domeniche, stesse date del rito romano, nomi diversi): all'inizio della Quaresima, della Samaritana, di Abramo, del cieco nato, di Lazzaro.
+  - Tutti i calcoli usano `strtotime()` (sicuro rispetto al cambio ora legale, vedi fix 1.3.26).
+
 ## [1.3.26] - com_messe / pkg_messe (mod_messe 1.1.11)
 - **Domenica delle Palme**: aggiunta all'elenco delle feste mobili riconosciute, ora etichettata correttamente sul frontend invece di apparire come generico "Festivo".
 - **Nuova sezione "Settimana Santa"** per ogni chiesa: riti particolari (Via Crucis, Confessioni, Cena del Signore, ecc.) inseribili per giorno di riferimento (Domenica delle Palme, Lunedì/Martedì/Mercoledì Santo, Giovedì Santo, Venerdì Santo, Sabato Santo di giorno), con data calcolata automaticamente ogni anno in base alla Pasqua. Ogni rito ha una modalità **Aggiungi** (si somma all'orario normale del giorno, default) o **Sostituisci** (lo rimpiazza interamente — utile per Giovedì/Venerdì Santo). Nuova tabella `messe_settimana_santa`.

@@ -87,6 +87,59 @@ class MesseHelper
         return $feste;
     }
 
+    /**
+     * Calcola le domeniche di Avvento per l'anno indicato: 4 per il rito
+     * romano, 6 per il rito ambrosiano. Sono sempre le domeniche che
+     * precedono il Natale (25 dicembre), contate a ritroso a partire
+     * dall'ultima domenica prima di Natale (compresa, se il 24 dicembre
+     * stesso è domenica).
+     */
+    public static function getDomenicheAvvento(int $Y, string $rito = 'romano'): array
+    {
+        $numDomeniche = ($rito === 'ambrosiano') ? 6 : 4;
+
+        // Trova la domenica sull'asse "24 dicembre o precedente" (IV
+        // domenica di Avvento nel rito romano, VI nell'ambrosiano)
+        $vigilia24 = mktime(0, 0, 0, 12, 24, $Y);
+        $wVigilia  = (int) date('w', $vigilia24);
+        $ultimaDomenica = strtotime('-' . $wVigilia . ' days', $vigilia24);
+
+        $domeniche = [];
+        for ($k = 0; $k < $numDomeniche; $k++) {
+            $data   = strtotime('-' . (7 * $k) . ' days', $ultimaDomenica);
+            $numero = $numDomeniche - $k; // la più vicina a Natale ha il numero più alto
+            $chiave = 'COM_MESSE_AVVENTO_' . ($rito === 'ambrosiano' ? 'AMB_' : '') . $numero;
+            $domeniche[date('m-d', $data)] = Text::_($chiave);
+        }
+
+        return $domeniche;
+    }
+
+    /**
+     * Calcola le prime 5 domeniche di Quaresima (Invocavit...Judica nel
+     * rito romano, con nomi diversi nel rito ambrosiano). La 6ª domenica
+     * di Quaresima coincide in entrambi i riti con la Domenica delle
+     * Palme (Pasqua - 7 giorni), già gestita separatamente in
+     * getFesteMobili() e quindi non ripetuta qui. Le date coincidono per
+     * entrambi i riti (cambiano solo i nomi): la differenza tra rito
+     * romano e ambrosiano riguarda il giorno delle Ceneri (mercoledì
+     * prima vs lunedì dopo la I domenica), non la data delle domeniche.
+     */
+    public static function getDomenicheQuaresima(int $pasqua, string $rito = 'romano'): array
+    {
+        $offsets = [-42, -35, -28, -21, -14]; // I, II, III, IV, V domenica
+
+        $domeniche = [];
+        foreach ($offsets as $idx => $offset) {
+            $numero = $idx + 1;
+            $data   = strtotime($offset . ' days', $pasqua);
+            $chiave = 'COM_MESSE_QUARESIMA_' . ($rito === 'ambrosiano' ? 'AMB_' : '') . $numero;
+            $domeniche[date('m-d', $data)] = Text::_($chiave);
+        }
+
+        return $domeniche;
+    }
+
     public static function getGiorni(): array
     {
         return [
@@ -175,6 +228,8 @@ class MesseHelper
         $pasqua         = self::calcolaPasqua($Y);
         $solennitaFisse = self::getSolennitaFisse($rito);
         $festeMobili    = self::getFesteMobili($pasqua, $rito);
+        $festeMobili    = array_merge($festeMobili, self::getDomenicheAvvento($Y, $rito));
+        $festeMobili    = array_merge($festeMobili, self::getDomenicheQuaresima($pasqua, $rito));
         $giorniNomi     = self::getGiorni();
         $vigiliaKey     = date('m-d', strtotime('-1 days', $pasqua));
 

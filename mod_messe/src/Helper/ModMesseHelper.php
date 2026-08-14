@@ -149,6 +149,40 @@ class ModMesseHelper
         return $feste;
     }
 
+    public static function getDomenicheAvvento(int $Y, string $rito = 'romano'): array
+    {
+        $numDomeniche = ($rito === 'ambrosiano') ? 6 : 4;
+
+        $vigilia24 = mktime(0, 0, 0, 12, 24, $Y);
+        $wVigilia  = (int) date('w', $vigilia24);
+        $ultimaDomenica = strtotime('-' . $wVigilia . ' days', $vigilia24);
+
+        $domeniche = [];
+        for ($k = 0; $k < $numDomeniche; $k++) {
+            $data   = strtotime('-' . (7 * $k) . ' days', $ultimaDomenica);
+            $numero = $numDomeniche - $k;
+            $chiave = 'COM_MESSE_AVVENTO_' . ($rito === 'ambrosiano' ? 'AMB_' : '') . $numero;
+            $domeniche[date('m-d', $data)] = Text::_($chiave);
+        }
+
+        return $domeniche;
+    }
+
+    public static function getDomenicheQuaresima(int $pasqua, string $rito = 'romano'): array
+    {
+        $offsets = [-42, -35, -28, -21, -14];
+
+        $domeniche = [];
+        foreach ($offsets as $idx => $offset) {
+            $numero = $idx + 1;
+            $data   = strtotime($offset . ' days', $pasqua);
+            $chiave = 'COM_MESSE_QUARESIMA_' . ($rito === 'ambrosiano' ? 'AMB_' : '') . $numero;
+            $domeniche[date('m-d', $data)] = Text::_($chiave);
+        }
+
+        return $domeniche;
+    }
+
     public static function getGiorni(): array
     {
         return [
@@ -227,6 +261,9 @@ class ModMesseHelper
         $pasqua         = self::calcolaPasqua($Y);
         $solennitaFisse = self::getSolennitaFisse($rito);
         $festeMobili    = self::getFesteMobili($pasqua, $rito);
+        $festeMobili    = array_merge($festeMobili, self::getDomenicheAvvento($Y, $rito));
+        $festeMobili    = array_merge($festeMobili, self::getDomenicheQuaresima($pasqua, $rito));
+        $festeMobili    = array_merge($festeMobili, self::getDomenicheAvvento($Y, $rito));
         $giorniNomi     = self::getGiorni();
         $vigiliaKey     = date('m-d', strtotime('-1 days', $pasqua));
 

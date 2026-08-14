@@ -1,0 +1,16 @@
+-- Gestione Orari Messe by Gioacchino Cipriano
+-- Update 1.3.27 — Etichettatura completa delle domeniche di Avvento e
+-- Quaresima con i nomi liturgici tradizionali:
+-- * Avvento romano (4 domeniche): Ad te levavi, Populus Sion, Gaudete,
+--   Rorate.
+-- * Avvento ambrosiano (6 domeniche): della Venuta del Signore, dei
+--   Figli del Regno, delle Profezie adempiute, dell'Ingresso del
+--   Messia, del Precursore, della Divina Maternità.
+-- * Quaresima romana (5 domeniche, la 6ª è la Domenica delle Palme già
+--   gestita): Invocavit, Reminiscere, Oculi, Laetare, Judica.
+-- * Quaresima ambrosiana (5 domeniche, stesse date del rito romano,
+--   nomi diversi): all'inizio della Quaresima, della Samaritana, di
+--   Abramo, del cieco nato, di Lazzaro.
+-- Tutti i calcoli usano strtotime() per essere sicuri rispetto al
+-- cambio dell'ora legale (vedi fix 1.3.26).
+SELECT 1;
