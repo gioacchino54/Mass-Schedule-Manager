@@ -230,6 +230,21 @@ class MesseHelper
         $festeMobili    = self::getFesteMobili($pasqua, $rito);
         $festeMobili    = array_merge($festeMobili, self::getDomenicheAvvento($Y, $rito));
         $festeMobili    = array_merge($festeMobili, self::getDomenicheQuaresima($pasqua, $rito));
+
+        // Mercoledì delle Ceneri (rito romano) o Lunedì delle Ceneri (rito
+        // ambrosiano, dove le Ceneri sono differite dal mercoledì al lunedì
+        // successivo alla I domenica di Quaresima). NON viene unito a
+        // festeMobili perché non deve cambiare il tipo di orario del
+        // giorno (le messe seguono comunque l'orario feriale/vigilia/
+        // festivo normale, solo con l'aggiunta del rito delle Ceneri) —
+        // viene quindi usato solo come etichetta informativa.
+        if ($rito === 'ambrosiano') {
+            $mdCeneri    = date('m-d', strtotime('-41 days', $pasqua));
+            $nomeCeneri  = Text::_('COM_MESSE_LUNEDI_CENERI');
+        } else {
+            $mdCeneri    = date('m-d', strtotime('-46 days', $pasqua));
+            $nomeCeneri  = Text::_('COM_MESSE_MERCOLEDI_CENERI');
+        }
         $giorniNomi     = self::getGiorni();
         $vigiliaKey     = date('m-d', strtotime('-1 days', $pasqua));
 
@@ -307,7 +322,7 @@ class MesseHelper
             $md               = date('m-d', $giorno);
             $ymd              = date('Y-m-d', $giorno);
             $w                = (int) date('w', $giorno);
-            $nomeCelebrazione = null;
+            $nomeCelebrazione = ($md === $mdCeneri) ? $nomeCeneri : null;
 
             // Unifica eccezioni puntuali (data fissa gg-mm) e riti di
             // Settimana Santa (data calcolata dalla Pasqua) in un unico

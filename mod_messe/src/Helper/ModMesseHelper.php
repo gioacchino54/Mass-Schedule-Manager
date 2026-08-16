@@ -263,6 +263,14 @@ class ModMesseHelper
         $festeMobili    = self::getFesteMobili($pasqua, $rito);
         $festeMobili    = array_merge($festeMobili, self::getDomenicheAvvento($Y, $rito));
         $festeMobili    = array_merge($festeMobili, self::getDomenicheQuaresima($pasqua, $rito));
+
+        if ($rito === 'ambrosiano') {
+            $mdCeneri    = date('m-d', strtotime('-41 days', $pasqua));
+            $nomeCeneri  = Text::_('COM_MESSE_LUNEDI_CENERI');
+        } else {
+            $mdCeneri    = date('m-d', strtotime('-46 days', $pasqua));
+            $nomeCeneri  = Text::_('COM_MESSE_MERCOLEDI_CENERI');
+        }
         $festeMobili    = array_merge($festeMobili, self::getDomenicheAvvento($Y, $rito));
         $giorniNomi     = self::getGiorni();
         $vigiliaKey     = date('m-d', strtotime('-1 days', $pasqua));
@@ -336,7 +344,7 @@ class ModMesseHelper
             $md               = date('m-d', $giorno);
             $ymd              = date('Y-m-d', $giorno);
             $w                = (int) date('w', $giorno);
-            $nomeCelebrazione = null;
+            $nomeCelebrazione = ($md === $mdCeneri) ? $nomeCeneri : null;
 
             $eventiSpeciali = [];
             if (isset($eccezioni[$md]))            $eventiSpeciali = array_merge($eventiSpeciali, $eccezioni[$md]);
