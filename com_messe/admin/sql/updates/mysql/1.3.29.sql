@@ -1,0 +1,12 @@
+-- Gestione Orari Messe by Gioacchino Cipriano
+-- Update 1.3.29 — Fix accessibilità/contrasto colori: il badge del rito
+-- Ambrosiano nella lista chiese del backend usava le classi Bootstrap
+-- generiche "bg-info text-dark", il cui aspetto reale dipende dalle
+-- variabili CSS del template di amministrazione in uso — su alcuni temi
+-- (es. sfondo blu scuro) il contrasto con il testo risultava scarso.
+-- Sostituito con colori fissi espliciti, identici a quelli già usati
+-- nel badge del frontend e del modulo, garantendo un contrasto
+-- adeguato indipendentemente dal tema di amministrazione. Corretta
+-- anche l'assenza dell'import della classe Text (il testo del badge
+-- era hardcoded in italiano, non tradotto).
+SELECT 1;

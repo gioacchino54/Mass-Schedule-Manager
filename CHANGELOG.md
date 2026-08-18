@@ -2,6 +2,12 @@
 
 Tutte le modifiche rilevanti a `com_messe`, `mod_messe` e al meccanismo di distribuzione/aggiornamento sono documentate in questo file.
 
+## [1.3.30] - com_messe / pkg_messe
+- Fix accessibilità/contrasto colori: il badge del rito Ambrosiano nella lista chiese del backend usava le classi Bootstrap generiche `bg-info text-dark`, il cui aspetto reale dipende dalle variabili CSS del template di amministrazione — su alcuni temi il contrasto risultava scarso. Sostituito con colori fissi espliciti, identici a quelli già usati nel badge del frontend e del modulo. Corretta anche l'assenza dell'import della classe `Text` (il testo del badge era hardcoded in italiano, non tradotto).
+
+## [1.3.29] - pkg_messe (mod_messe 1.1.12)
+- Aggiunto anche nel modulo `mod_messe` il badge "Rito Romano" / "Rito Ambrosiano" accanto al nome della chiesa, già presente nel componente `com_messe` ma mai implementato nel template del modulo. Stesso stile grafico in entrambi.
+
 ## [1.3.28] - com_messe / pkg_messe (mod_messe 1.1.11)
 - Etichettato il **Mercoledì delle Ceneri** (rito romano, Pasqua - 46 giorni) e il **Lunedì delle Ceneri** (rito ambrosiano, dove le Ceneri sono differite dal mercoledì al lunedì successivo alla I domenica di Quaresima, Pasqua - 41 giorni). A differenza delle solennità, questa etichetta **non cambia il tipo di orario del giorno** (resta feriale/vigilia/festivo normale): le Ceneri non sono un giorno "festivo" liturgicamente, solo un giorno feriale con un rito aggiuntivo. Calcolo sicuro rispetto al cambio ora legale (`strtotime()`).
 

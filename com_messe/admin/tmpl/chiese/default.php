@@ -10,6 +10,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
 
 HTMLHelper::_('bootstrap.tooltip', '.hasTooltip');
 ?>
@@ -51,9 +52,19 @@ HTMLHelper::_('bootstrap.tooltip', '.hasTooltip');
                 </td>
                 <td>
                     <?php if ($item->rito === 'ambrosiano') : ?>
-                        <span class="badge bg-info text-dark">Ambrosiano</span>
+                        <span class="badge" style="
+                                border:1px solid #0dcaf0;
+                                color:#06748b;
+                                background:rgba(13,202,240,0.1);
+                                font-weight:600;
+                            "><?= Text::_('COM_MESSE_RITO_AMBROSIANO') ?></span>
                     <?php else : ?>
-                        <span class="badge bg-secondary">Romano</span>
+                        <span class="badge" style="
+                                border:1px solid #6c757d;
+                                color:#495057;
+                                background:rgba(108,117,125,0.1);
+                                font-weight:600;
+                            "><?= Text::_('COM_MESSE_RITO_ROMANO') ?></span>
                     <?php endif; ?>
                 </td>
                 <td><?= $this->escape($item->indirizzo ?? '—') ?></td>

@@ -29,9 +29,24 @@ $now      = ($testMode && !empty($testDate)) ? (int) strtotime($testDate) : time
 
     <?php if (!empty($chiesa->nome)) : ?>
     <!-- ✅ Nome chiesa in h2 -->
-    <h2 class="mod-messe-chiesa-nome h5 fw-bold mb-2">
+    <h2 class="mod-messe-chiesa-nome h5 fw-bold mb-1">
         ⛪ <?= htmlspecialchars($chiesa->nome) ?>
     </h2>
+    <?php endif; ?>
+
+    <?php if (!empty($chiesa->rito)) : ?>
+    <span class="mod-messe-badge-rito mb-2 d-inline-block" style="
+            padding:2px 10px;
+            border-radius:20px;
+            font-size:0.75rem;
+            font-weight:600;
+            border:1px solid <?= $chiesa->rito === 'ambrosiano' ? '#0dcaf0' : '#6c757d' ?>;
+            color:<?= $chiesa->rito === 'ambrosiano' ? '#06748b' : '#495057' ?>;
+            background:<?= $chiesa->rito === 'ambrosiano' ? 'rgba(13,202,240,0.1)' : 'rgba(108,117,125,0.1)' ?>;
+        ">
+        <?= Text::_($chiesa->rito === 'ambrosiano' ? 'COM_MESSE_RITO_AMBROSIANO' : 'COM_MESSE_RITO_ROMANO') ?>
+    </span>
+    <div class="mb-2"></div>
     <?php endif; ?>
 
     <?php if ($showNextMass && !empty($orari['prossima'])) :
